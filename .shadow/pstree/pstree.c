@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 
   while (-1 != (ch = getopt_long(argc, argv, "pnV", long_options, &option_index)))
   {
-    printf("long_index is %d"\n, option_index);
+    printf("long_index is %d\n", option_index);
     printf("argv[%d] = %c\n", optind, ch);
     switch (ch)
     {
