@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
   while (-1 != (ch = getopt_long(argc, argv, "pnV", long_options, &option_index)))
   {
     printf("long_index is %d", option_index);
-    printf("argv[%d] = %s\n", optind, ch);
+    printf("argv[%d] = %c\n", optind, ch);
     switch (ch)
     {
     case 'p':
@@ -40,6 +40,16 @@ int main(int argc, char *argv[])
       printf("%s", help_message);
       exit(0);
     }
+  }
+
+  if (pFlag)
+  {
+    printf("pid\n");
+  }
+
+  if (nFlag)
+  {
+    printf("numeric\n");
   }
 
   return 0;
