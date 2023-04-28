@@ -96,13 +96,13 @@ static void __VECTOR_PUSH(Vector *vector, unsigned int type_size, void *element)
       exit(1);
     }
     vector->capacity *= 2;
+  }
 
-    unsigned char *src = (unsigned char *)element;
-    unsigned char *dst = ((unsigned char *)(vector->vec)) + type_size * (vector->size++);
-    for (int i = 0; i < type_size; ++i)
-    {
-      dst[i] = src[i];
-    }
+  unsigned char *src = (unsigned char *)element;
+  unsigned char *dst = ((unsigned char *)(vector->vec)) + type_size * (vector->size++);
+  for (int i = 0; i < type_size; ++i)
+  {
+    dst[i] = src[i];
   }
 }
 
