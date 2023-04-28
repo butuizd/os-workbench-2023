@@ -151,7 +151,7 @@ static void push_pid(Vector *pids)
     pid_t pid = dirent_to_pid(dirItem);
     if (pid > 0)
     {
-      Vector_Push(pid_t, pids, pid);
+      Vector_Push(pid_t, pids, &pid);
     }
   }
 }
