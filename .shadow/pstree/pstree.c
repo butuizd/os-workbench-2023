@@ -171,8 +171,12 @@ int main(int argc, char *argv[])
     printf("numeric\n");
   }
 
-  Vector *pids = NULL;
-  pids = Vector_Init(pid_t, 8);
+  Vector *pids = Vector_Init(pid_t, 8);
+  push_pid(pids);
+  for (int i = 0; i < pids->size(); ++i)
+  {
+    printf("\d\n", pids->vec[i])
+  }
 
   return 0;
 }
