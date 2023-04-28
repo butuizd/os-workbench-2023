@@ -113,8 +113,6 @@ static void __VECTOR_PUSH(Vector *vector, unsigned int type_size, void *element)
 
 /* 将所有pid放入一个vector中*/
 /* --------------------------------------------------------------------------------------------- */
-static Vector *pids = NULL;
-pids = Vector_Init(pid_t, 8);
 
 /* 将文件名转换为数字 */
 static int dirent_to_pid(struct dirent *dirItem)
@@ -172,6 +170,9 @@ int main(int argc, char *argv[])
   {
     printf("numeric\n");
   }
+
+  static Vector *pids = NULL;
+  pids = Vector_Init(pid_t, 8);
 
   return 0;
 }
