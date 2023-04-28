@@ -146,7 +146,7 @@ static void push_pid()
   }
 
   struct dirent *dirItem = NULL;
-  while (dirItem = readdir(dir) != NULL)
+  while ((dirItem = readdir(dir)) != NULL)
   {
     pid_t pid = dirent_to_pid(dirItem);
     if (pid > 0)
