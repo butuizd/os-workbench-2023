@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -157,8 +158,148 @@ static void push_pid(Vector *pids)
 }
 /* --------------------------------------------------------------------------------------------- */
 
+/* 建树 */
+/* --------------------------------------------------------------------------------------------- */
+typedef struct NODE
+{
+  pid_t pid;
+  char *comm;
+  Vector *children_ids;
+} Node;
+
+static Vector *nodes = NULL;
+
+/* 由于C没有哈希，处于跨平台要求，只好使用2分搜索查找父节点的索引 */
+static int get_parent(pid_t ppid)
+{
+  if (nodes == NULL)
+  {
+    return 0;
+  }
+
+  int left = 0, right = nodes->size;
+  while (left < right)
+  {
+    int mid = left + (right - left) / 2;
+    pid_t mid_pid = Vector_Get(Node *, nodes, mid)->pid;
+    if (mid_pid == ppid)
+    {
+      return mid;
+    }
+    else if (mid_pid > ppid)
+    {
+      right = mid;
+    }
+    else
+    {
+      left = mid + 1;
+    }
+  }
+  return -1;
+}
+
+/* 构建树 */
+static void make_node(pid_t pid)
+{
+  char pstat[24] = {0}, comm[17] = {0};
+  pid_t ppid = 0;
+  int ppidx = -1;
+  sprintf(pstat, "/proc/%d/stat", (int)pid);
+
+  FILE *fstat = fopen(pstat, "r");
+  if (!fstat)
+  {
+    return;
+  }
+
+  fscanf(fstat, "%d (%s %c %d", (int *)pstat, comm, pstat, &ppid);
+  if ((ppidx = get_parent(ppid)) >= 0)
+  {
+    Node *node = (Node *)malloc(sizeof(Node));
+    node->pid = pid;
+    node->children_ids = NULL;
+
+    int len = strlen(comm);
+    node->comm = (char *)malloc(len);
+    strcpy(node->comm, comm);
+    node->comm[len - 1] = 0;
+
+    if (!nodes)
+    {
+      nodes = Vector_Init(Node *, 1);
+      Vector_Push(Node *, nodes, &node);
+    }
+    else
+    {
+      Node *parent = Vector_Get(Node *, nodes, ppidx);
+      if (!parent->children_ids)
+      {
+        parent->children_ids = Vector_Init(int, 1);
+      }
+      Vector_Push(int, parent->children_ids, &(nodes->size));
+      Vector_Push(Node *, nodes, &node);
+    }
+  }
+  fclose(fstat);
+}
+
+/* --------------------------------------------------------------------------------------------- */
+
+/* DFS打印树 */
+/* --------------------------------------------------------------------------------------------- */
+static void dfs_print(Node *node, char *prefix)
+{
+  printf(prefix);
+  printf("%s", node->comm);
+
+  if (!node->children_ids)
+  {
+    printf("/n");
+    return;
+  }
+
+  char *newprefix = (char *)malloc(strlen(prefix) + strlen(node->comm) + 1);
+  strcpy(newprefix, prefix);
+  for (int i = 0; (node->comm)[i]; ++i)
+  {
+    strcat(prefix, " ");
+  }
+
+  for (int i = 0; i < node->children_ids->size; ++i)
+  {
+    int child_id = Vector_Get(int, node->children_ids, i);
+    Node *child = Vector_Get(Node *, nodes, child_id);
+
+    if (i == 0)
+    {
+      if (node->children_ids->size == 1)
+      {
+        dfs_print(child, "───");
+      }
+      else
+      {
+        dfs_print(child, "─┬─");
+      }
+    }
+    else if (i == node->children_ids->size - 1)
+    {
+      char *nextprefix = (char *)malloc(strlen(newprefix) + 5);
+      strcat(nextprefix, "└─");
+      dfs_print(child, newprefix);
+    }
+    else
+    {
+      char *nextprefix = (char *)malloc(strlen(newprefix) + 5);
+      strcat(nextprefix, "├─");
+      dfs_print(child, newprefix);
+    }
+  }
+}
+/* --------------------------------------------------------------------------------------------- */
+
 int main(int argc, char *argv[])
 {
+  /* 解析参数 */
   parse_args(argc, argv);
 
   if (pFlag)
@@ -171,12 +312,27 @@ int main(int argc, char *argv[])
     printf("numeric\n");
   }
 
+  /* 读取所有 pid 并放入一个 Vector*/
   Vector *pids = Vector_Init(pid_t, 8);
   push_pid(pids);
+
+  // /* 排序 pids(默认顺序已排好) */
+  // int comp(const void* ptr1, const void* ptr2) {
+  //   return *((pid_t*)ptr1) < *((pid_t*)ptr2);
+  // }
+
+  // qsort(pids, pids->size, sizeof(pid_t), comp);
+
+  /* 建树 */
   for (int i = 0; i < pids->size; ++i)
   {
-    printf("%d\n", Vector_Get(pid_t, pids, i));
+    pid_t pid = Vector_Get(pid_t, pids, i);
+    make_node(pid);
+    // printf("%s\n", Vector_Get(Node *, nodes, i)->comm);
   }
+
+  Node *root = Vector_Get(Node *, nodes, 0);
+  dfs_print(root, "");
 
   return 0;
 }
