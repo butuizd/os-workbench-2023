@@ -136,7 +136,7 @@ static int dirent_to_pid(struct dirent *dirItem)
 }
 
 /* 写入pid */
-static void push_pid()
+static void push_pid(Vector *pids)
 {
   DIR *dir = opendir("/proc/");
   if (dir == NULL)
