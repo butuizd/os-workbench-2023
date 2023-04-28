@@ -108,7 +108,7 @@ static void __VECTOR_PUSH(Vector *vector, unsigned int type_size, void *element)
 
 #define Vector_Init(type, capacity) (__VECTOR_INIT(sizeof(type), (capacity)))
 #define Vector_Push(type, vector, element) (__VECTOR_PUSH(vector, sizeof(type), (element)))
-#define Vector_Get(type, vector, idx) ((type)((type *)((vector->vec))[(idx)]))
+#define Vector_Get(type, vector, idx) ((type)(((type *)(vector->vec))[(idx)]))
 /* --------------------------------------------------------------------------------------------- */
 
 /* 将所有pid放入一个vector中*/
