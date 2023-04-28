@@ -254,7 +254,7 @@ static void dfs_print(Node *node, char *prefix)
 
   if (!node->children_ids)
   {
-    printf("/n");
+    printf("\n");
     return;
   }
 
