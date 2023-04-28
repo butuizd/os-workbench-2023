@@ -249,7 +249,7 @@ static void make_node(pid_t pid)
 /* --------------------------------------------------------------------------------------------- */
 static void dfs_print(Node *node, char *prefix)
 {
-  printf(prefix);
+  printf("%s", prefix);
   printf("%s", node->comm);
 
   if (!node->children_ids)
@@ -262,7 +262,7 @@ static void dfs_print(Node *node, char *prefix)
   strcpy(newprefix, prefix);
   for (int i = 0; (node->comm)[i]; ++i)
   {
-    strcat(prefix, " ");
+    strcat(newprefix, " ");
   }
 
   for (int i = 0; i < node->children_ids->size; ++i)
@@ -285,13 +285,13 @@ static void dfs_print(Node *node, char *prefix)
     {
       char *nextprefix = (char *)malloc(strlen(newprefix) + 5);
       strcat(nextprefix, "└─");
-      dfs_print(child, newprefix);
+      dfs_print(child, nextprefix);
     }
     else
     {
       char *nextprefix = (char *)malloc(strlen(newprefix) + 5);
       strcat(nextprefix, "├─");
-      dfs_print(child, newprefix);
+      dfs_print(child, nextprefix);
     }
   }
 }
