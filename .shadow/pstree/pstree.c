@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
 
   Vector *pids = Vector_Init(pid_t, 8);
   push_pid(pids);
-  for (int i = 0; i < pids->size(); ++i)
+  for (int i = 0; i < pids->size; ++i)
   {
     printf("\d\n", pids->vec[i]);
   }
