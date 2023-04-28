@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
     printf("numeric\n");
   }
 
-  static Vector *pids = NULL;
+  Vector *pids = NULL;
   pids = Vector_Init(pid_t, 8);
 
   return 0;
