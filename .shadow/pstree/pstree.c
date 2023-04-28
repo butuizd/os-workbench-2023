@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
   push_pid(pids);
   for (int i = 0; i < pids->size; ++i)
   {
-    printf("%d\n", pids->vec[i]);
+    printf("%d\n", Vector_Get(pid_t, pids, i));
   }
 
   return 0;
