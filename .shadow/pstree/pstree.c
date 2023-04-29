@@ -284,11 +284,15 @@ static void dfs_print(Node *node, char *prefix, char *symb, int prefixFlag)
     return;
   }
 
-  char *newprefix = (char *)malloc(strlen(prefix) + strlen(node->comm) + 5);
-  strcpy(newprefix, prefix);
+  // char *newprefix = (char *)malloc(strlen(prefix) + strlen(node->comm) + 5);
+  char *newprefix;
+  if (asprintf(&newprefix, "%s", prefix) < 0)
+  {
+    printf("fail to generate newprefix.")
+  };
   for (int i = 0; pname[i]; ++i)
   {
-    strcat(newprefix, " ");
+    asprintf(&newprefix, "%s", " ");
   }
   free(pname);
 
@@ -297,20 +301,25 @@ static void dfs_print(Node *node, char *prefix, char *symb, int prefixFlag)
     int child_id = Vector_Get(int, node->children_ids, i);
     Node *child = Vector_Get(Node *, nodes, child_id);
 
-    char *nextprefix = (char *)malloc(strlen(newprefix) + 5);
-    strcpy(nextprefix, newprefix);
+    char *nextprefix;
+    asprintf(&nextprefix, "%s", newprefix);
 
     if (i == 0)
     {
       if (node->children_ids->size == 1)
       {
-        strcat(nextprefix, "   ");
+        // strcat(nextprefix, "   ");
+        asprintf(&nextprefix, "%s", "   ");
         dfs_print(child, nextprefix, "───", false);
+        free(nextprefix);
       }
       else
       {
-        strcat(nextprefix, " | ");
+        // strcat(nextprefix, " | ");
+
+        asprintf(&nextprefix, "%s", "   ");
         dfs_print(child, nextprefix, "─┬─", false);
+        free(nextprefix);
       }
     }
     else if (i == node->children_ids->size - 1)
@@ -320,10 +329,10 @@ static void dfs_print(Node *node, char *prefix, char *symb, int prefixFlag)
     }
     else
     {
-      strcat(nextprefix, "");
+      // strcat(nextprefix, "");
       dfs_print(child, nextprefix, " ├─", true);
     }
-    free(nextprefix);
+    free(newprefix);
   }
 }
 /* --------------------------------------------------------------------------------------------- */
