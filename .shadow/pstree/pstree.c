@@ -368,7 +368,6 @@ int main(int argc, char *argv[])
 
   /* 打印树 */
   Node *root = Vector_Get(Node *, nodes, 0);
-  pFlag = false;
   dfs_print(root, "", NULL);
 
   return 0;
