@@ -249,6 +249,7 @@ static void make_node(pid_t pid)
 /* --------------------------------------------------------------------------------------------- */
 static void dfs_print(Node *node, char *prefix, char *symb)
 {
+  /* 如果是第一个树枝，打印连接符，否则打印前缀的竖线和空格 */
   if (symb)
   {
     printf("%s", symb);
@@ -257,7 +258,15 @@ static void dfs_print(Node *node, char *prefix, char *symb)
   {
     printf("%s", prefix);
   }
-  printf("%s", node->comm);
+
+  if (pFlag)
+  {
+    printf("%s(%d)", node->comm, node->pid);
+  }
+  else
+  {
+    printf("%s", node->comm);
+  }
 
   if (!node->children_ids)
   {
