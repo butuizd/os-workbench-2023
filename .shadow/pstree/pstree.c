@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
@@ -264,14 +266,14 @@ static void dfs_print(Node *node, char *prefix, char *symb)
   {
     if (asprintf(&pname, "%s(%d)", node->comm, node->pid) < 0)
     {
-      printf("fail to print process name and pid.")
+      printf("fail to print process name and pid.");
     };
   }
   else
   {
     if (asprintf(&pname, "%s", node->comm) < 0)
     {
-      printf("fail to print process name.")
+      printf("fail to print process name.");
     };
   }
   printf(pname);
