@@ -50,6 +50,7 @@ void parse_args(int argc, char *argv[])
       break;
     case 'V':
       printf("pstree version: 2023\n");
+      exit(0);
       break;
     default:
       printf("%s", help_message);
@@ -353,10 +354,10 @@ int main(int argc, char *argv[])
     /* 排序 pids(其实默认顺序已排好，所以此处看不出区别) */
     int comp(const void *ptr1, const void *ptr2)
     {
-      return *((pid_t *)ptr1) < *((pid_t *)ptr2);
+      return *((pid_t *)ptr1) > *((pid_t *)ptr2);
     }
 
-    qsort(pids, pids->size, sizeof(pid_t), comp);
+    qsort(pids->vec, pids->size, sizeof(pid_t), comp);
   }
 
   /* 建树 */
@@ -372,3 +373,16 @@ int main(int argc, char *argv[])
 
   return 0;
 }
+
+/* 效果 */
+/*
+init(1)─┬─init(11)───init(12)─┬─sh(13)───sh(14)───sh(19)───node(23)─┬─node(34)─┬─zsh(145)
+        |                     |                                     |          ├─zsh(920)───make(25714)───pstree-64(25720)
+        |                     |                                     |          └─zsh(15848)
+        |                     |                                     ├─node(68)
+        |                     |                                     └─node(103)─┬─cpptools(174)
+        |                     |                                                 └─node(3252)
+        |                     └─cpptools-srv(1511)
+        ├─init(3105)───init(3106)───node(3107)
+        └─init(3114)───init(3115)───node(3116)
+*/
