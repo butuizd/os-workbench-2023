@@ -277,7 +277,7 @@ static void dfs_print(Node *node, char *prefix, char *symb)
     int child_id = Vector_Get(int, node->children_ids, i);
     Node *child = Vector_Get(Node *, nodes, child_id);
 
-    char *nextprefix = (char *)malloc(strlen(newprefix) + 5);
+    char *nextprefix = (char *)malloc(strlen(newprefix) + 8);
     strcpy(nextprefix, newprefix);
 
     if (i == 0)
