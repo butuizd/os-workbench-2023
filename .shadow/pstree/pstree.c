@@ -288,11 +288,11 @@ static void dfs_print(Node *node, char *prefix, char *symb, int prefixFlag)
   char *newprefix;
   if (asprintf(&newprefix, "%s", prefix) < 0)
   {
-    printf("fail to generate newprefix.")
-  };
+    printf("fail to generate newprefix.");
+  }
   for (int i = 0; pname[i]; ++i)
   {
-    asprintf(&newprefix, "%s", " ");
+    asprintf(&newprefix, "%s%s", newprefix, " ");
   }
   free(pname);
 
@@ -309,31 +309,27 @@ static void dfs_print(Node *node, char *prefix, char *symb, int prefixFlag)
       if (node->children_ids->size == 1)
       {
         // strcat(nextprefix, "   ");
-        asprintf(&nextprefix, "%s", "   ");
+        asprintf(&nextprefix, "%s%s", nextprefix, "   ");
         dfs_print(child, nextprefix, "───", false);
         free(nextprefix);
       }
       else
       {
-        // strcat(nextprefix, " | ");
-
-        asprintf(&nextprefix, "%s", "   ");
+        asprintf(&nextprefix, "%s%s", nextprefix, " | ");
         dfs_print(child, nextprefix, "─┬─", false);
         free(nextprefix);
       }
     }
     else if (i == node->children_ids->size - 1)
     {
-      // strcat(nextprefix, "\0");
       dfs_print(child, nextprefix, " └─", true);
     }
     else
     {
-      // strcat(nextprefix, "");
       dfs_print(child, nextprefix, " ├─", true);
     }
-    free(newprefix);
   }
+  free(newprefix);
 }
 /* --------------------------------------------------------------------------------------------- */
 
