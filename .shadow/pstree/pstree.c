@@ -49,11 +49,11 @@ void parse_args(int argc, char *argv[])
       nFlag = true;
       break;
     case 'V':
-      printf("pstree version: 2023\n");
+      fprintf(stderr, "pstree version: 2023\n");
       exit(0);
       break;
     default:
-      printf("%s", help_message);
+      fprintf(stdin, "%s", help_message);
       exit(1);
     }
   }
