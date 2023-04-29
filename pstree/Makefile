@@ -4,7 +4,7 @@ all: $(NAME)-64 $(NAME)-32
 
 include ../Makefile
 
-test: all
+test64: all
 	./$(NAME)-64 -np
 	./$(NAME)-64 -V
 	./$(NAME)-64 -z
@@ -12,6 +12,8 @@ test: all
 	./$(NAME)-64 --numeric-sort
 	./$(NAME)-64 --version
 	./$(NAME)-64 --falsearg
+
+test32: all
 	./$(NAME)-32 -np
 	./$(NAME)-32 -V
 	./$(NAME)-32 -z
