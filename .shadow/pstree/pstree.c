@@ -276,7 +276,7 @@ static void dfs_print(Node *node, char *prefix, char *symb)
       printf("fail to print process name.");
     };
   }
-  printf(pname);
+  printf("%s", pname);
 
   if (!node->children_ids)
   {
