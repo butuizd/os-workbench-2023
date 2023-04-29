@@ -341,7 +341,7 @@ int main(int argc, char *argv[])
   }
 
   Node *root = Vector_Get(Node *, nodes, 0);
-  dfs_print(root, "");
+  dfs_print(root, "", NULL);
 
   return 0;
 }
