@@ -247,7 +247,7 @@ static void make_node(pid_t pid)
 
 /* DFS打印树 */
 /* --------------------------------------------------------------------------------------------- */
-static void dfs_print(Node *node, char *prefix, char *symb = NULL)
+static void dfs_print(Node *node, char *prefix, char *symb)
 {
   if (symb)
   {
@@ -295,12 +295,12 @@ static void dfs_print(Node *node, char *prefix, char *symb = NULL)
     else if (i == node->children_ids->size - 1)
     {
       strcat(nextprefix, "└─");
-      dfs_print(child, nextprefix);
+      dfs_print(child, nextprefix, NULL);
     }
     else
     {
       strcat(nextprefix, "├─");
-      dfs_print(child, nextprefix);
+      dfs_print(child, nextprefix, NULL);
     }
   }
 }
