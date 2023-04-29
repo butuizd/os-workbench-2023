@@ -247,9 +247,16 @@ static void make_node(pid_t pid)
 
 /* DFS打印树 */
 /* --------------------------------------------------------------------------------------------- */
-static void dfs_print(Node *node, char *prefix)
+static void dfs_print(Node *node, char *prefix, char *symb = NULL)
 {
-  printf("%s", prefix);
+  if (symb)
+  {
+    printf("%s", symb);
+  }
+  else
+  {
+    printf("%s", prefix);
+  }
   printf("%s", node->comm);
 
   if (!node->children_ids)
@@ -270,26 +277,28 @@ static void dfs_print(Node *node, char *prefix)
     int child_id = Vector_Get(int, node->children_ids, i);
     Node *child = Vector_Get(Node *, nodes, child_id);
 
+    char *nextprefix = (char *)malloc(strlen(newprefix) + 5);
+
     if (i == 0)
     {
       if (node->children_ids->size == 1)
       {
-        dfs_print(child, "───");
+        strcat(nextprefix, "   ");
+        dfs_print(child, nextprefix, "───");
       }
       else
       {
-        dfs_print(child, "─┬─");
+        strcat(nextprefix, " | ");
+        dfs_print(child, nextprefix, "─┬─");
       }
     }
     else if (i == node->children_ids->size - 1)
     {
-      char *nextprefix = (char *)malloc(strlen(newprefix) + 5);
       strcat(nextprefix, "└─");
       dfs_print(child, nextprefix);
     }
     else
     {
-      char *nextprefix = (char *)malloc(strlen(newprefix) + 5);
       strcat(nextprefix, "├─");
       dfs_print(child, nextprefix);
     }
