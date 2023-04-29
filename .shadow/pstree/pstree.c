@@ -249,18 +249,15 @@ static void make_node(pid_t pid)
 
 /* DFS打印树 */
 /* --------------------------------------------------------------------------------------------- */
-static void dfs_print(Node *node, char *prefix, char *symb, int prefixFlag)
+static void dfs_print(Node *node, char *prefix, char *symb)
 {
-  /* 如果是第一个树枝，打印连接符，否则打印前缀的竖线和空格 */
-  if (prefixFlag)
-  {
-    printf("%s", prefix);
-  }
+  /* 打印连接符 */
   if (symb)
   {
     printf("%s", symb);
   }
 
+  /* 根据参数决定输出的进程名称形式，并打印 */
   char *pname;
   if (pFlag)
   {
@@ -278,13 +275,14 @@ static void dfs_print(Node *node, char *prefix, char *symb, int prefixFlag)
   }
   printf("%s", pname);
 
+  /* 如果是叶子节点打印后直接返回 */
   if (!node->children_ids)
   {
     printf("\n");
     return;
   }
 
-  // char *newprefix = (char *)malloc(strlen(prefix) + strlen(node->comm) + 5);
+  /* 根据新的进程名称，扩展每行要输出的前缀空格数量 */
   char *newprefix;
   if (asprintf(&newprefix, "%s", prefix) < 0)
   {
@@ -296,11 +294,14 @@ static void dfs_print(Node *node, char *prefix, char *symb, int prefixFlag)
   }
   free(pname);
 
+  /* 递归打印 */
   for (int i = 0; i < node->children_ids->size; ++i)
   {
+    /* 按顺序拿到子节点 */
     int child_id = Vector_Get(int, node->children_ids, i);
     Node *child = Vector_Get(Node *, nodes, child_id);
 
+    /* 根据子节点的位置给前缀添加竖线 */
     char *nextprefix;
     asprintf(&nextprefix, "%s", newprefix);
 
@@ -308,25 +309,30 @@ static void dfs_print(Node *node, char *prefix, char *symb, int prefixFlag)
     {
       if (node->children_ids->size == 1)
       {
-        // strcat(nextprefix, "   ");
         asprintf(&nextprefix, "%s%s", nextprefix, "   ");
-        dfs_print(child, nextprefix, "───", false);
+        dfs_print(child, nextprefix, "───");
         free(nextprefix);
       }
       else
       {
         asprintf(&nextprefix, "%s%s", nextprefix, " | ");
-        dfs_print(child, nextprefix, "─┬─", false);
+        dfs_print(child, nextprefix, "─┬─");
         free(nextprefix);
       }
     }
     else if (i == node->children_ids->size - 1)
     {
-      dfs_print(child, nextprefix, " └─", true);
+      printf("%s", nextprefix);
+      asprintf(&nextprefix, "%s%s", nextprefix, "   ");
+      dfs_print(child, nextprefix, " └─");
+      free(nextprefix);
     }
     else
     {
-      dfs_print(child, nextprefix, " ├─", true);
+      printf("%s", nextprefix);
+      asprintf(&nextprefix, "%s%s", nextprefix, " | ");
+      dfs_print(child, nextprefix, " ├─");
+      free(nextprefix);
     }
   }
   free(newprefix);
@@ -337,16 +343,6 @@ int main(int argc, char *argv[])
 {
   /* 解析参数 */
   parse_args(argc, argv);
-
-  if (pFlag)
-  {
-    printf("pid\n");
-  }
-
-  if (nFlag)
-  {
-    printf("numeric\n");
-  }
 
   /* 读取所有 pid 并放入一个 Vector*/
   Vector *pids = Vector_Init(pid_t, 8);
@@ -368,12 +364,12 @@ int main(int argc, char *argv[])
   {
     pid_t pid = Vector_Get(pid_t, pids, i);
     make_node(pid);
-    // printf("%s\n", Vector_Get(Node *, nodes, i)->comm);
   }
 
+  /* 打印树 */
   Node *root = Vector_Get(Node *, nodes, 0);
-  pFlag = true;
-  dfs_print(root, "", NULL, false);
+  pFlag = false;
+  dfs_print(root, "", NULL);
 
   return 0;
 }
