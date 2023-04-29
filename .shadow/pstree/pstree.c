@@ -259,14 +259,22 @@ static void dfs_print(Node *node, char *prefix, char *symb)
     printf("%s", prefix);
   }
 
+  char *pname;
   if (pFlag)
   {
-    printf("%s(%d)", node->comm, node->pid);
+    if (asprintf(&pname, "%s(%d)", node->comm, node->pid) < 0)
+    {
+      printf("fail to print process name and pid.")
+    };
   }
   else
   {
-    printf("%s", node->comm);
+    if (asprintf(&pname, "%s", node->comm) < 0)
+    {
+      printf("fail to print process name.")
+    };
   }
+  printf(pname);
 
   if (!node->children_ids)
   {
@@ -276,10 +284,11 @@ static void dfs_print(Node *node, char *prefix, char *symb)
 
   char *newprefix = (char *)malloc(strlen(prefix) + strlen(node->comm) + 1);
   strcpy(newprefix, prefix);
-  for (int i = 0; (node->comm)[i]; ++i)
+  for (int i = 0; pname[i]; ++i)
   {
     strcat(newprefix, " ");
   }
+  free(pname);
 
   for (int i = 0; i < node->children_ids->size; ++i)
   {
@@ -335,12 +344,16 @@ int main(int argc, char *argv[])
   Vector *pids = Vector_Init(pid_t, 8);
   push_pid(pids);
 
-  // /* 排序 pids(默认顺序已排好) */
-  // int comp(const void* ptr1, const void* ptr2) {
-  //   return *((pid_t*)ptr1) < *((pid_t*)ptr2);
-  // }
+  if (nFlag)
+  {
+    /* 排序 pids(其实默认顺序已排好，所以此处看不出区别) */
+    int comp(const void *ptr1, const void *ptr2)
+    {
+      return *((pid_t *)ptr1) < *((pid_t *)ptr2);
+    }
 
-  // qsort(pids, pids->size, sizeof(pid_t), comp);
+    qsort(pids, pids->size, sizeof(pid_t), comp);
+  }
 
   /* 建树 */
   for (int i = 0; i < pids->size; ++i)
