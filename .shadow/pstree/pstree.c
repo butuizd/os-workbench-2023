@@ -249,16 +249,16 @@ static void make_node(pid_t pid)
 
 /* DFS打印树 */
 /* --------------------------------------------------------------------------------------------- */
-static void dfs_print(Node *node, char *prefix, char *symb)
+static void dfs_print(Node *node, char *prefix, char *symb, int prefixFlag)
 {
   /* 如果是第一个树枝，打印连接符，否则打印前缀的竖线和空格 */
+  if (prefixFlag)
+  {
+    printf("%s", prefix);
+  }
   if (symb)
   {
     printf("%s", symb);
-  }
-  else
-  {
-    printf("%s", prefix);
   }
 
   char *pname;
@@ -284,7 +284,7 @@ static void dfs_print(Node *node, char *prefix, char *symb)
     return;
   }
 
-  char *newprefix = (char *)malloc(strlen(prefix) + strlen(node->comm) + 1);
+  char *newprefix = (char *)malloc(strlen(prefix) + strlen(node->comm) + 5);
   strcpy(newprefix, prefix);
   for (int i = 0; pname[i]; ++i)
   {
@@ -297,7 +297,7 @@ static void dfs_print(Node *node, char *prefix, char *symb)
     int child_id = Vector_Get(int, node->children_ids, i);
     Node *child = Vector_Get(Node *, nodes, child_id);
 
-    char *nextprefix = (char *)malloc(strlen(newprefix) + 8);
+    char *nextprefix = (char *)malloc(strlen(newprefix) + 5);
     strcpy(nextprefix, newprefix);
 
     if (i == 0)
@@ -305,24 +305,25 @@ static void dfs_print(Node *node, char *prefix, char *symb)
       if (node->children_ids->size == 1)
       {
         strcat(nextprefix, "   ");
-        dfs_print(child, nextprefix, "───");
+        dfs_print(child, nextprefix, "───", false);
       }
       else
       {
         strcat(nextprefix, " | ");
-        dfs_print(child, nextprefix, "─┬─");
+        dfs_print(child, nextprefix, "─┬─", false);
       }
     }
     else if (i == node->children_ids->size - 1)
     {
-      strcat(nextprefix, " └─");
-      dfs_print(child, nextprefix, NULL);
+      // strcat(nextprefix, "\0");
+      dfs_print(child, nextprefix, " └─", true);
     }
     else
     {
-      strcat(nextprefix, " ├─");
-      dfs_print(child, nextprefix, NULL);
+      strcat(nextprefix, "");
+      dfs_print(child, nextprefix, " ├─", true);
     }
+    free(nextprefix);
   }
 }
 /* --------------------------------------------------------------------------------------------- */
@@ -366,7 +367,8 @@ int main(int argc, char *argv[])
   }
 
   Node *root = Vector_Get(Node *, nodes, 0);
-  dfs_print(root, "", NULL);
+  pFlag = true;
+  dfs_print(root, "", NULL, false);
 
   return 0;
 }
