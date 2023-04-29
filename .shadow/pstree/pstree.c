@@ -295,12 +295,12 @@ static void dfs_print(Node *node, char *prefix, char *symb)
     }
     else if (i == node->children_ids->size - 1)
     {
-      strcat(nextprefix, "└─");
+      strcat(nextprefix, " └─");
       dfs_print(child, nextprefix, NULL);
     }
     else
     {
-      strcat(nextprefix, "├─");
+      strcat(nextprefix, " ├─");
       dfs_print(child, nextprefix, NULL);
     }
   }
